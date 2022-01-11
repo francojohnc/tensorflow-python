@@ -13,10 +13,21 @@ test_label = test_label.reshape(-1, )
 # create a model
 model = tf.keras.Sequential()
 # convolution 1
-model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu, input_shape=(32, 32, 3)))
+model.add(tf.keras.layers.Conv2D(
+    filters=32,
+    kernel_size=(3, 3),
+    padding="same",
+    activation=tf.nn.relu,
+    input_shape=(32, 32, 3)
+))
 model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
 # convolution 2
-model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation=tf.nn.relu, input_shape=(32, 32, 3)))
+model.add(tf.keras.layers.Conv2D(
+    filters=64,
+    kernel_size=(3, 3),
+    padding="same",
+    activation=tf.nn.relu,
+))
 model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
 # convert matrix to 1 array
 model.add(tf.keras.layers.Flatten())
