@@ -69,9 +69,7 @@ boxes = (boxes.numpy() * 100).astype('int32')
 # structure the model
 def get_model():
     model = tf.keras.Sequential()
-    model.add(
-        tf.keras.layers.Input(shape=(100, 100, 1))
-    )
+    model.add(tf.keras.layers.Input(shape=(100, 100, 1)))
     # convolution 1
     model.add(tf.keras.layers.Conv2D(
         filters=32,
