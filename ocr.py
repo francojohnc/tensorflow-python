@@ -1,19 +1,20 @@
 import os
+import string
 
 import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
 
 EPOCH = 100
-BATCH = 1
+BATCH = 16
 PATH = 'data/captcha/'
 WIDTH = 200
 HEIGHT = 50
 CHANNEL = 1
 DIMENSION = (WIDTH, HEIGHT, CHANNEL)
-LENGTH = 5
+LENGTH = 5 # max length of output text
 
-characters = ['2', 'b', '8', '7', 'g', '4']
+characters = list(string.digits + string.ascii_lowercase)
 
 char_to_num = tf.keras.layers.StringLookup(
     vocabulary=characters,
@@ -23,7 +24,6 @@ num_to_char = tf.keras.layers.StringLookup(
     vocabulary=characters,
     invert=True
 )
-
 
 # data preprocessing
 def preprocess(path):
@@ -69,11 +69,18 @@ model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
 new_shape = ((WIDTH // 4), (HEIGHT // 4) * 64)
 model.add(tf.keras.layers.Reshape(target_shape=new_shape))
 model.add(tf.keras.layers.Dense(
-    units=LENGTH + 2,
+    units=64,
+    activation=tf.nn.relu
+))
+model.add(tf.keras.layers.Dropout(rate=0.2))
+model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=128, return_sequences=True, dropout=0.25)))
+model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.25)))
+model.add(tf.keras.layers.Dense(
+    units=len(characters),
     activation=tf.nn.softmax
 ))
 model.summary()
-exit()
+
 
 def ctc_loss(y_true, y_pred):
     label_length = tf.ones(shape=(tf.shape(y_true)[0], 1), dtype="int32") * tf.shape(y_true)[1]
